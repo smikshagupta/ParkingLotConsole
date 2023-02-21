@@ -6,6 +6,14 @@ namespace ParkingLotConsole
 {
     class Program
     {
+        public static void MainMenu()
+        {
+            Console.WriteLine("How can we help you?");
+            Console.WriteLine("1 Park Vehicle");
+            Console.WriteLine("2 UnPark Vehicle");
+            Console.WriteLine("3 Check Available slots");
+            Console.WriteLine("Enter 0 to exit");
+        }
         static void Main(string[] args)
         {
             Console.WriteLine("Parking Lot Console App");
@@ -26,13 +34,7 @@ namespace ParkingLotConsole
 
             ParkingLot parkingLot = new ParkingLot(slots);
 
-            parkingLot.currentOccupancy();
-
-            Console.WriteLine("How can we help you?");
-            Console.WriteLine("1 Park Vehicle");
-            Console.WriteLine("2 UnPark Vehicle");
-            Console.WriteLine("Enter 0 to exit");
-
+            MainMenu();
             while (true)
             {
                 var option = Convert.ToInt32(Console.ReadLine());
@@ -42,7 +44,11 @@ namespace ParkingLotConsole
                     Console.WriteLine("Enter Vehicle Number");
                     var vehicleNumber = Console.ReadLine();
 
-                    Console.WriteLine("Enter Vehicle Type");
+                    Console.WriteLine("Choose Vehicle Type:");
+                    Console.WriteLine("Two Wheeler");
+                    Console.WriteLine("Four Wheeler");
+                    Console.WriteLine("Heavy Vehicle");
+
                     var type = Console.ReadLine();
 
                     Vehicle vehicle = new Vehicle(vehicleNumber, type);
@@ -51,7 +57,12 @@ namespace ParkingLotConsole
 
                 else if (option == 2)
                 {
-
+                    Console.WriteLine("Enter vehicle Number");
+                    parkingLot.UnparkVehicle(Console.ReadLine());
+                }
+                else if (option == 3)
+                {
+                    parkingLot.currentOccupancy();
                 }
                 else if (option == 0)
                     break;
@@ -59,7 +70,7 @@ namespace ParkingLotConsole
                 {
                     Console.WriteLine("Invalid option");
                 }
-                Console.WriteLine("Choose an option");
+                MainMenu();
             }
             
 
