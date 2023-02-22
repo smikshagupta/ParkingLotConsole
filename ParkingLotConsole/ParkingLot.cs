@@ -16,7 +16,7 @@ namespace ParkingLotConsole
             slots = newSlots;     
         }
 
-        public void currentOccupancy()
+        public void CurrentOccupancy()
         {
             foreach(string key in slots.Keys)
             {

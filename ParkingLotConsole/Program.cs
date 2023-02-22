@@ -78,7 +78,7 @@ namespace ParkingLotConsole
                 }
                 else if (option == 3)
                 {
-                    parkingLot.currentOccupancy();
+                    parkingLot.CurrentOccupancy();
                 }
                 else if (option == 0)
                     break;
