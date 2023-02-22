@@ -13,6 +13,7 @@ namespace ParkingLotConsole
             Console.WriteLine("2 UnPark Vehicle");
             Console.WriteLine("3 Check Available slots");
             Console.WriteLine("Enter 0 to exit");
+            Console.WriteLine();
         }
         static void Main(string[] args)
         {
@@ -45,11 +46,26 @@ namespace ParkingLotConsole
                     var vehicleNumber = Console.ReadLine();
 
                     Console.WriteLine("Choose Vehicle Type:");
-                    Console.WriteLine("Two Wheeler");
-                    Console.WriteLine("Four Wheeler");
-                    Console.WriteLine("Heavy Vehicle");
+                    Console.WriteLine("1 Two Wheeler");
+                    Console.WriteLine("2 Four Wheeler");
+                    Console.WriteLine("3 Heavy Vehicle");
 
                     var type = Console.ReadLine();
+                    switch ( type)
+                    {
+                        case "1":
+                            type = "Two Wheeler";
+                            break;
+                        case "2":
+                            type = "Four Wheeler";
+                            break;
+                        case "3":
+                            type = "Heavy Vehicle";
+                            break;
+                        default:
+                            Console.WriteLine("Invalid vehicle type");
+                            break;
+                    }
 
                     Vehicle vehicle = new Vehicle(vehicleNumber, type);
                     parkingLot.ParkVehicle(vehicle);
