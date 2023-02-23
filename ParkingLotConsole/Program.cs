@@ -1,37 +1,34 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 
 namespace ParkingLotConsole
 {
     class Program
     {
+        
         public static void MainMenu()
         {
             Console.WriteLine("How can we help you?");
             Console.WriteLine("1 Park Vehicle");
             Console.WriteLine("2 UnPark Vehicle");
             Console.WriteLine("3 Check Available slots");
-            Console.WriteLine("Enter 0 to exit");
-            Console.WriteLine();
+            Console.WriteLine("Enter 0 to exit\n");
         }
         static void Main(string[] args)
         {
-            Console.WriteLine("Parking Lot Console App");
-            Console.WriteLine();
+            Console.WriteLine("Parking Lot Console App\n");
 
-            Console.WriteLine("Please Enter Parking slots");
-            Console.WriteLine();
+            Console.WriteLine("Please Enter Parking slots \n");
 
             Dictionary<string, int> slots = new Dictionary<string, int>(); 
             Console.WriteLine("Slots for Two Wheeler");
-            slots["Two Wheeler"] = Convert.ToInt32(Console.ReadLine());
+            slots["TwoWheeler"] = Convert.ToInt32(Console.ReadLine());
 
             Console.WriteLine("Slots for Four Wheeler");
-            slots["Four Wheeler"] = Convert.ToInt32(Console.ReadLine());
+            slots["FourWheeler"] = Convert.ToInt32(Console.ReadLine());
 
             Console.WriteLine("Slots for Heavy Vehicle");
-            slots["Heavy Vehicle"] = Convert.ToInt32(Console.ReadLine());
+            slots["HeavyVehicle"] = Convert.ToInt32(Console.ReadLine());
 
             ParkingLot parkingLot = new ParkingLot(slots);
 
@@ -39,53 +36,53 @@ namespace ParkingLotConsole
             while (true)
             {
                 var option = Convert.ToInt32(Console.ReadLine());
-                if (option == 1)
+                switch (option)
                 {
-                    Console.WriteLine("Enter Vehicle Details");
-                    Console.WriteLine("Enter Vehicle Number");
-                    var vehicleNumber = Console.ReadLine();
+                    case 0:
+                        return;
+                        
+                    case 1:
+                        Console.WriteLine("Enter Vehicle Details");
+                        Console.WriteLine("Enter Vehicle Number");
+                        var vehicleNumber = Console.ReadLine();
 
-                    Console.WriteLine("Choose Vehicle Type:");
-                    Console.WriteLine("1 Two Wheeler");
-                    Console.WriteLine("2 Four Wheeler");
-                    Console.WriteLine("3 Heavy Vehicle");
+                        Console.WriteLine("Choose Vehicle Type:");
+                        Console.WriteLine("1 Two Wheeler");
+                        Console.WriteLine("2 Four Wheeler");
+                        Console.WriteLine("3 Heavy Vehicle");
 
-                    var type = Console.ReadLine();
-                    switch ( type)
-                    {
-                        case "1":
-                            type = "Two Wheeler";
-                            break;
-                        case "2":
-                            type = "Four Wheeler";
-                            break;
-                        case "3":
-                            type = "Heavy Vehicle";
-                            break;
-                        default:
-                            Console.WriteLine("Invalid vehicle type");
-                            break;
-                    }
+                        var type = Console.ReadLine();
+                        switch (type)
+                        {
+                            case "1":
+                                type = "TwoWheeler";
+                                break;
+                            case "2":
+                                type = "FourWheeler";
+                                break;
+                            case "3":
+                                type = "HeavyVehicle";
+                                break;
+                            default:
+                                Console.WriteLine("Invalid vehicle type");
+                                break;
+                        }
 
-                    Vehicle vehicle = new Vehicle(vehicleNumber, type);
-                    parkingLot.ParkVehicle(vehicle);
+                        Vehicle vehicle = new Vehicle(vehicleNumber, type);
+                        parkingLot.ParkVehicle(vehicle);
+                        break;
+                    case 2:
+                        Console.WriteLine("Enter vehicle Number");
+                        parkingLot.UnparkVehicle(Console.ReadLine());
+                        break;
+                    case 3:
+                        parkingLot.CurrentOccupancy();
+                        break;
+                    default:
+                        Console.WriteLine("Invalid option");
+                        break;
                 }
 
-                else if (option == 2)
-                {
-                    Console.WriteLine("Enter vehicle Number");
-                    parkingLot.UnparkVehicle(Console.ReadLine());
-                }
-                else if (option == 3)
-                {
-                    parkingLot.CurrentOccupancy();
-                }
-                else if (option == 0)
-                    break;
-                else
-                {
-                    Console.WriteLine("Invalid option");
-                }
                 MainMenu();
             }
             
