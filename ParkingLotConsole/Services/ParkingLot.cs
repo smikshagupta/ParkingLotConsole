@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using ParkingLotConsole.enums;
+using ParkingLotConsole.Exceptions;
 
 namespace ParkingLotConsole
 {
     class ParkingLot
     {
-        Dictionary<string, int> currentSlots = new Dictionary<string, int>();
+        Dictionary<string, int> slots = new Dictionary<string, int>();
         List<ParkingTicket> tickets = new List<ParkingTicket>();
 
         List<Vehicle> parkedVehicles = new List<Vehicle>();
@@ -14,43 +16,39 @@ namespace ParkingLotConsole
         int[] slotsArray;
         public ParkingLot(Dictionary<string,int> newSlots)
         {
-            currentSlots = newSlots;
-            foreach(int slot in currentSlots.Values)
-            {
-                totalSlots += slot;
-            }
+            slots = newSlots;
+            totalSlots= newSlots.Count;
             slotsArray = new int[totalSlots];
-            for(int i = 0; i < totalSlots; i++)
-            {
-                slotsArray[i] = -1;
-            }
         }
         
-        public void CurrentOccupancy()
+        public Dictionary<string,int> CurrentOccupancy()
         {
+            Dictionary<string, int> currentSlots = new Dictionary<string, int>();
             int start=0;
-            foreach(string key in currentSlots.Keys)
+            foreach(string key in slots.Keys)
             {
                 int count = 0;
-                int end = start + currentSlots[key];
+                int end = start + slots[key];
                 for (int i=start;i<end; i++)
                 {
-                    if (slotsArray[i] == -1)
+                    if (slotsArray[i] == 0)
                     {
                         count += 1;
                     }
                 }
-                Console.WriteLine($" No. of {key} slots are {count}");
+                currentSlots[key] = count;
                 start = end;
             }
+            return currentSlots;
         }
 
-        public void ParkVehicle(Vehicle vehicle)
+        public string ParkVehicle(Vehicle vehicle)
         {
             //Check if vehicle is already parked.
+            string result;
             if (parkedVehicles.Exists(currvehicle => currvehicle.VehicleNumber.Equals(vehicle.VehicleNumber)))
             {
-                Console.WriteLine("Vehicle is already parked.");
+                result="Vehicle is already parked.";
             }
             else
             {
@@ -63,19 +61,23 @@ namespace ParkingLotConsole
                     ParkingTicket ticket = new ParkingTicket(vehicle.VehicleNumber, slotNumber);
                     tickets.Add(ticket);
                     DisplayTicket(ticket);
-                    Console.WriteLine("Vehicle Parked");
+                    result="Vehicle Parked";
                 }
                 else
                 {
-                    Console.WriteLine("No parking slot available.");
+                    result="No parking slot available.";
                 }
 
-            }   
+            }
+            return result;
         }
 
 
-        public void UnparkVehicle(string vehicleNumber)
+        public bool UnparkVehicle(string vehicleNumber,out string vNumber,out DateTime? outTime )
         {
+            bool isVehicleParked = false;
+            vNumber = null;
+            outTime = null;
             if (parkedVehicles.Count > 0)
             {
 
@@ -86,46 +88,48 @@ namespace ParkingLotConsole
                         if (ticket.vehicleNumber.Equals(vehicleNumber))
                         {
                             ticket.outTime = DateTime.Now;
-                            slotsArray[ticket.slotNumber - 1] = -1;
-                            Console.WriteLine($"Vehicle {ticket.vehicleNumber} unparked at {ticket.outTime}");
+                            slotsArray[ticket.slotNumber - 1] = 0;
+                            isVehicleParked = true;
+                            vNumber = vehicleNumber;
+                            outTime = ticket.outTime;
+                            break;
                         }
-
                     }
                     Vehicle vehicle = parkedVehicles.Find(v => v.VehicleNumber.Equals(vehicleNumber));
                     parkedVehicles.Remove(vehicle);
-                    //slots[vehicle.VehicleType] += 1;
                 }
                 else
                 {
-                    Console.WriteLine($"Vehicle {vehicleNumber} is not parked in the parking lot.");
+                    throw new VehicleNotFoundException();
                 }
 
             }
             else
             {
-                Console.WriteLine("No Vehicles parked.");
+                throw new EmptyParkingLotException();
             }
+            return isVehicleParked;
         }
     
-        public int AssignSlot(string type)
+        public int AssignSlot(VehicleType type)
         {
             switch (type)
             {
-                case "TwoWheeler":
+                case VehicleType.TwoWheeler:
                     start = 0;
                     break;
 
-                case "FourWheeler":
-                    start = currentSlots["TwoWheeler"];
+                case VehicleType.FourWheeler:
+                    start = slots["TwoWheeler"];
                     break;
-                case "HeavyVehicle":
-                    start = totalSlots - currentSlots["HeavyVehicle"];
+                case VehicleType.HeavyVehicle:
+                    start = totalSlots - slots["HeavyVehicle"];
                     break;
             }
-            end = start + currentSlots[type];
+            end = start + slots[type.ToString()];
             for (int i = start; i < end; i++)
             {
-                if (slotsArray[i] == -1)
+                if (slotsArray[i] == 0)
                 {
                     slotsArray[i] = i + 1;
                     return i+1;

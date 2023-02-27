@@ -1,6 +1,7 @@
-﻿using System;
+﻿using ParkingLotConsole.enums;
+using System;
 using System.Collections.Generic;
-
+using ParkingLotConsole.Exceptions;
 namespace ParkingLotConsole
 {
     class Program
@@ -50,33 +51,41 @@ namespace ParkingLotConsole
                         Console.WriteLine("1 Two Wheeler");
                         Console.WriteLine("2 Four Wheeler");
                         Console.WriteLine("3 Heavy Vehicle");
-
-                        var type = Console.ReadLine();
-                        switch (type)
+                        // Enum.Parse(typeof(VehicleType), Console.ReadLine());
+                        try
                         {
-                            case "1":
-                                type = "TwoWheeler";
-                                break;
-                            case "2":
-                                type = "FourWheeler";
-                                break;
-                            case "3":
-                                type = "HeavyVehicle";
-                                break;
-                            default:
-                                Console.WriteLine("Invalid vehicle type");
-                                break;
+                            VehicleType type = (VehicleType)int.Parse(Console.ReadLine());
+                            Vehicle vehicle = new Vehicle(vehicleNumber, type);
+                            string parkingMessage = parkingLot.ParkVehicle(vehicle);
+                            Console.WriteLine(parkingMessage);
                         }
-
-                        Vehicle vehicle = new Vehicle(vehicleNumber, type);
-                        parkingLot.ParkVehicle(vehicle);
+                        catch(Exception)
+                        {
+                            Console.WriteLine("Invalid Vehicle type");
+                        }
                         break;
                     case 2:
                         Console.WriteLine("Enter vehicle Number");
-                        parkingLot.UnparkVehicle(Console.ReadLine());
+                        try
+                        {
+                            string vNumber;
+                            DateTime? outTime;
+                            bool isUnparked=parkingLot.UnparkVehicle(Console.ReadLine(),out vNumber,out outTime);
+                            if (isUnparked)
+                                Console.WriteLine($"Vehicle {vNumber} unparked at {outTime}");
+                        }
+                        catch (Exception e)
+                        { 
+                            if(e is VehicleNotFoundException || e is EmptyParkingLotException)
+                                Console.WriteLine(e);
+                        }
                         break;
                     case 3:
-                        parkingLot.CurrentOccupancy();
+                        Dictionary<string,int> availableSlots=parkingLot.CurrentOccupancy();
+                        foreach(string key in availableSlots.Keys)
+                        {
+                            Console.WriteLine($"No. of {key} slots: {availableSlots[key]}");
+                        }
                         break;
                     default:
                         Console.WriteLine("Invalid option");
@@ -84,8 +93,7 @@ namespace ParkingLotConsole
                 }
 
                 MainMenu();
-            }
-            
+            }   
 
         }
     }
