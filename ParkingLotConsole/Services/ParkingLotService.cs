@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using ParkingLotConsole.Data;
 using ParkingLotConsole.enums;
 using ParkingLotConsole.Exceptions;
 
@@ -7,9 +8,8 @@ namespace ParkingLotConsole
 {
     class ParkingLotService
     {
-        Dictionary<string, int> slots = new Dictionary<string, int>();
+        Dictionary<string, int> slots;
         List<ParkingTicket> tickets = new List<ParkingTicket>();
-
         List<Vehicle> parkedVehicles = new List<Vehicle>();
         private int totalSlots = 0;
         int start,end = 0;
@@ -17,8 +17,11 @@ namespace ParkingLotConsole
         public ParkingLotService(Dictionary<string,int> newSlots)
         {
             slots = newSlots;
-            totalSlots= newSlots.Count;
-            slotsArray = new int[totalSlots];
+            foreach(string key in newSlots.Keys)
+            {
+                totalSlots += newSlots[key];
+            }
+           slotsArray = new int[totalSlots];
         }
         
         public Dictionary<string,int> CurrentOccupancy()

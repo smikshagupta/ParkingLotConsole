@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using ParkingLotConsole.Exceptions;
+using ParkingLotConsole.Data;
 namespace ParkingLotConsole
 {
     class Program
@@ -13,7 +14,7 @@ namespace ParkingLotConsole
             Console.WriteLine("1 Park Vehicle");
             Console.WriteLine("2 UnPark Vehicle");
             Console.WriteLine("3 Check Available slots");
-            Console.WriteLine("Enter 0 to exit\n");
+            Console.WriteLine("4 Exit\n");
         }
 
         private static void DisplayTicket(ParkingTicket ticket)
@@ -26,27 +27,15 @@ namespace ParkingLotConsole
         static void Main(string[] args)
         {
             Console.WriteLine("Parking Lot Console App\n");
-
             Console.WriteLine("Please Enter Parking slots \n");
-
-            Dictionary<string, int> slots = new Dictionary<string, int>(); 
-            //Console.WriteLine("Slots for Two Wheeler");
-            //slots["TwoWheeler"] = Convert.ToInt32(Console.ReadLine());
-
-            //Console.WriteLine("Slots for Four Wheeler");
-            //slots["FourWheeler"] = Convert.ToInt32(Console.ReadLine());
-
-            //Console.WriteLine("Slots for Heavy Vehicle");
-            //slots["HeavyVehicle"] = Convert.ToInt32(Console.ReadLine());
-
+            Dictionary<string, int> slots = new Dictionary<string, int>();
+            
             foreach(string vehicleType in Enum.GetNames(typeof(VehicleType)))
             {
                 Console.WriteLine($"Slots for {vehicleType}");
                 slots[vehicleType] = int.Parse(Console.ReadLine());
             }
-
             ParkingLotService parkingLot = new ParkingLotService(slots);
-
             MainMenu();
             while (true)
             {
@@ -60,7 +49,6 @@ namespace ParkingLotConsole
                         Console.WriteLine("Enter Vehicle Details");
                         Console.WriteLine("Enter Vehicle Number");
                         var vehicleNumber = Console.ReadLine();
-
                         Console.WriteLine("Choose Vehicle Type:");
                         Console.WriteLine("1 Two Wheeler");
                         Console.WriteLine("2 Four Wheeler");
