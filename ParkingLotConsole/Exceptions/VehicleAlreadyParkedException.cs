@@ -4,14 +4,15 @@ using System.Text;
 
 namespace ParkingLotConsole.Exceptions
 {
-    class EmptyParkingLotException:Exception
+    class VehicleAlreadyParkedException:Exception
     {
         public override string Message
         {
             get
             {
-                return "Parking Lot is empty.";
+                return "Vehicle is already parked.";
             }
         }
+
     }
 }

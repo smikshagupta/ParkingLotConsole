@@ -7,13 +7,21 @@ namespace ParkingLotConsole
     class Program
     {
         
-        public static void MainMenu()
+        private static void MainMenu()
         {
             Console.WriteLine("How can we help you?");
             Console.WriteLine("1 Park Vehicle");
             Console.WriteLine("2 UnPark Vehicle");
             Console.WriteLine("3 Check Available slots");
             Console.WriteLine("Enter 0 to exit\n");
+        }
+
+        private static void DisplayTicket(ParkingTicket ticket)
+        {
+            Console.WriteLine("---Parking Ticket---");
+            Console.WriteLine($"Vehicle Number: {ticket.vehicleNumber}");
+            Console.WriteLine($"Slot Number: {ticket.slotNumber}");
+            Console.WriteLine($"InTime :{ticket.inTime} \n");
         }
         static void Main(string[] args)
         {
@@ -22,27 +30,33 @@ namespace ParkingLotConsole
             Console.WriteLine("Please Enter Parking slots \n");
 
             Dictionary<string, int> slots = new Dictionary<string, int>(); 
-            Console.WriteLine("Slots for Two Wheeler");
-            slots["TwoWheeler"] = Convert.ToInt32(Console.ReadLine());
+            //Console.WriteLine("Slots for Two Wheeler");
+            //slots["TwoWheeler"] = Convert.ToInt32(Console.ReadLine());
 
-            Console.WriteLine("Slots for Four Wheeler");
-            slots["FourWheeler"] = Convert.ToInt32(Console.ReadLine());
+            //Console.WriteLine("Slots for Four Wheeler");
+            //slots["FourWheeler"] = Convert.ToInt32(Console.ReadLine());
 
-            Console.WriteLine("Slots for Heavy Vehicle");
-            slots["HeavyVehicle"] = Convert.ToInt32(Console.ReadLine());
+            //Console.WriteLine("Slots for Heavy Vehicle");
+            //slots["HeavyVehicle"] = Convert.ToInt32(Console.ReadLine());
 
-            ParkingLot parkingLot = new ParkingLot(slots);
+            foreach(string vehicleType in Enum.GetNames(typeof(VehicleType)))
+            {
+                Console.WriteLine($"Slots for {vehicleType}");
+                slots[vehicleType] = int.Parse(Console.ReadLine());
+            }
+
+            ParkingLotService parkingLot = new ParkingLotService(slots);
 
             MainMenu();
             while (true)
             {
-                var option = Convert.ToInt32(Console.ReadLine());
+                UserActions option = (UserActions) int.Parse(Console.ReadLine());
                 switch (option)
                 {
-                    case 0:
+                    case UserActions.Exit:
                         return;
                         
-                    case 1:
+                    case UserActions.ParkVehicle:
                         Console.WriteLine("Enter Vehicle Details");
                         Console.WriteLine("Enter Vehicle Number");
                         var vehicleNumber = Console.ReadLine();
@@ -56,15 +70,30 @@ namespace ParkingLotConsole
                         {
                             VehicleType type = (VehicleType)int.Parse(Console.ReadLine());
                             Vehicle vehicle = new Vehicle(vehicleNumber, type);
-                            string parkingMessage = parkingLot.ParkVehicle(vehicle);
-                            Console.WriteLine(parkingMessage);
+                            ParkingTicket ticket= parkingLot.ParkVehicle(vehicle);
+                            if(ticket is null)
+                            {
+                                Console.WriteLine("No parking slot available.");
+                            }
+                            else
+                            {
+                                DisplayTicket(ticket);
+                            }
                         }
-                        catch(Exception)
+                        catch(Exception e)
                         {
-                            Console.WriteLine("Invalid Vehicle type");
+                            if (e is VehicleAlreadyParkedException)
+                            {
+                                Console.WriteLine(e);
+                            }
+                            else
+                            {
+                                Console.WriteLine("Invalid Vehicle type");
+                            }
                         }
                         break;
-                    case 2:
+                    
+                    case UserActions.UnParkVehicle:
                         Console.WriteLine("Enter vehicle Number");
                         try
                         {
@@ -80,13 +109,15 @@ namespace ParkingLotConsole
                                 Console.WriteLine(e);
                         }
                         break;
-                    case 3:
+                    
+                    case UserActions.CurrentOccupancy:
                         Dictionary<string,int> availableSlots=parkingLot.CurrentOccupancy();
                         foreach(string key in availableSlots.Keys)
                         {
                             Console.WriteLine($"No. of {key} slots: {availableSlots[key]}");
                         }
                         break;
+                    
                     default:
                         Console.WriteLine("Invalid option");
                         break;

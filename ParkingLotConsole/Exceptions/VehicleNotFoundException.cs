@@ -4,7 +4,7 @@ using System.Text;
 
 namespace ParkingLotConsole.Exceptions
 {
-    class VehicleNotFoundException:ApplicationException
+    class VehicleNotFoundException:Exception
     {
         public override string Message
         {

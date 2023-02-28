@@ -5,7 +5,7 @@ using ParkingLotConsole.Exceptions;
 
 namespace ParkingLotConsole
 {
-    class ParkingLot
+    class ParkingLotService
     {
         Dictionary<string, int> slots = new Dictionary<string, int>();
         List<ParkingTicket> tickets = new List<ParkingTicket>();
@@ -14,7 +14,7 @@ namespace ParkingLotConsole
         private int totalSlots = 0;
         int start,end = 0;
         int[] slotsArray;
-        public ParkingLot(Dictionary<string,int> newSlots)
+        public ParkingLotService(Dictionary<string,int> newSlots)
         {
             slots = newSlots;
             totalSlots= newSlots.Count;
@@ -42,13 +42,12 @@ namespace ParkingLotConsole
             return currentSlots;
         }
 
-        public string ParkVehicle(Vehicle vehicle)
+        public ParkingTicket ParkVehicle(Vehicle vehicle)
         {
             //Check if vehicle is already parked.
-            string result;
             if (parkedVehicles.Exists(currvehicle => currvehicle.VehicleNumber.Equals(vehicle.VehicleNumber)))
             {
-                result="Vehicle is already parked.";
+                throw new VehicleAlreadyParkedException();
             }
             else
             {
@@ -56,20 +55,13 @@ namespace ParkingLotConsole
                 if (slotNumber != 0)
                 {
                     parkedVehicles.Add(vehicle);
-                    //Issue Ticket
                     Console.WriteLine("Generating your Ticket\n");
                     ParkingTicket ticket = new ParkingTicket(vehicle.VehicleNumber, slotNumber);
                     tickets.Add(ticket);
-                    DisplayTicket(ticket);
-                    result="Vehicle Parked";
+                    return ticket;
                 }
-                else
-                {
-                    result="No parking slot available.";
-                }
-
             }
-            return result;
+            return null;
         }
 
 
@@ -138,12 +130,5 @@ namespace ParkingLotConsole
             return 0;
         }
 
-        public void DisplayTicket(ParkingTicket ticket)
-        {
-            Console.WriteLine("---Parking Ticket---");
-            Console.WriteLine($"Vehicle Number: {ticket.vehicleNumber}");
-            Console.WriteLine($"Slot Number: {ticket.slotNumber}");
-            Console.WriteLine($"InTime :{ticket.inTime} \n");
-        }
     }
 }

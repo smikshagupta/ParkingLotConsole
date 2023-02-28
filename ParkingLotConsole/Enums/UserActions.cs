@@ -3,7 +3,7 @@ namespace ParkingLotConsole.enums
 {
     internal enum UserActions
     {
-        ParkVehicle,
+        ParkVehicle=1,
         UnParkVehicle,
         CurrentOccupancy,
         Exit
