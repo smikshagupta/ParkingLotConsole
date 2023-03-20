@@ -2,7 +2,8 @@
 using System;
 using System.Collections.Generic;
 using ParkingLotConsole.Exceptions;
-using ParkingLotConsole.Data;
+using ParkingLotConsole.Models;
+
 namespace ParkingLotConsole
 {
     class Program
@@ -28,14 +29,13 @@ namespace ParkingLotConsole
         {
             Console.WriteLine("Parking Lot Console App\n");
             Console.WriteLine("Please Enter Parking slots \n");
-            Dictionary<string, int> slots = new Dictionary<string, int>();
-            
+            List<Slot> availableSlots = new List<Slot>();
             foreach(string vehicleType in Enum.GetNames(typeof(VehicleType)))
             {
                 Console.WriteLine($"Slots for {vehicleType}");
-                slots[vehicleType] = int.Parse(Console.ReadLine());
+                availableSlots.Add(new Slot((VehicleType)Enum.Parse(typeof(VehicleType),vehicleType), int.Parse(Console.ReadLine())));
             }
-            ParkingLotService parkingLot = new ParkingLotService(slots);
+            ParkingLotService parkingLot = new ParkingLotService(availableSlots);
             MainMenu();
             while (true)
             {
@@ -99,10 +99,10 @@ namespace ParkingLotConsole
                         break;
                     
                     case UserActions.CurrentOccupancy:
-                        Dictionary<string,int> availableSlots=parkingLot.CurrentOccupancy();
-                        foreach(string key in availableSlots.Keys)
+                        List<Slot> currentSlots=parkingLot.CurrentOccupancy();
+                        foreach(Slot slot in currentSlots)
                         {
-                            Console.WriteLine($"No. of {key} slots: {availableSlots[key]}");
+                            Console.WriteLine($"No. of {slot.vehicleType} slots: {slot.slots}");
                         }
                         break;
                     

@@ -1,37 +1,43 @@
 ﻿using System;
 using System.Collections.Generic;
-using ParkingLotConsole.Data;
 using ParkingLotConsole.enums;
 using ParkingLotConsole.Exceptions;
+using ParkingLotConsole.Models;
 
 namespace ParkingLotConsole
 {
     class ParkingLotService
     {
-        Dictionary<string, int> slots;
+        //Dictionary<string, int> slots;
+        List<Slot> slots = new List<Slot>();
         List<ParkingTicket> tickets = new List<ParkingTicket>();
         List<Vehicle> parkedVehicles = new List<Vehicle>();
         private int totalSlots = 0;
         int start,end = 0;
         int[] slotsArray;
-        public ParkingLotService(Dictionary<string,int> newSlots)
+        public ParkingLotService(List<Slot> newSlots)
         {
             slots = newSlots;
-            foreach(string key in newSlots.Keys)
+            //foreach(string key in newSlots.Keys)
+            //{
+            //    totalSlots += newSlots[key];
+            //}
+
+            foreach(Slot slot in slots)
             {
-                totalSlots += newSlots[key];
+                totalSlots += slot.slots;
             }
            slotsArray = new int[totalSlots];
         }
         
-        public Dictionary<string,int> CurrentOccupancy()
+        public List<Slot> CurrentOccupancy()
         {
-            Dictionary<string, int> currentSlots = new Dictionary<string, int>();
+            List<Slot> currentSlots = new List<Slot>();
             int start=0;
-            foreach(string key in slots.Keys)
+            foreach(Slot slot in slots)
             {
                 int count = 0;
-                int end = start + slots[key];
+                int end = start + slot.slots;
                 for (int i=start;i<end; i++)
                 {
                     if (slotsArray[i] == 0)
@@ -39,7 +45,7 @@ namespace ParkingLotConsole
                         count += 1;
                     }
                 }
-                currentSlots[key] = count;
+                currentSlots.Add(new Slot(slot.vehicleType, count));
                 start = end;
             }
             return currentSlots;
@@ -58,7 +64,7 @@ namespace ParkingLotConsole
                 if (slotNumber != 0)
                 {
                     parkedVehicles.Add(vehicle);
-                    Console.WriteLine("Generating your Ticket\n");
+                    //Console.WriteLine("Generating your Ticket\n");
                     ParkingTicket ticket = new ParkingTicket(vehicle.VehicleNumber, slotNumber);
                     tickets.Add(ticket);
                     return ticket;
@@ -115,13 +121,13 @@ namespace ParkingLotConsole
                     break;
 
                 case VehicleType.FourWheeler:
-                    start = slots["TwoWheeler"];
+                    start = slots.Find(slot => slot.vehicleType == VehicleType.TwoWheeler).slots;
                     break;
                 case VehicleType.HeavyVehicle:
-                    start = totalSlots - slots["HeavyVehicle"];
+                    start = totalSlots - slots.Find(slot => slot.vehicleType == type).slots;
                     break;
             }
-            end = start + slots[type.ToString()];
+            end = start + slots.Find(slot => slot.vehicleType == type).slots;
             for (int i = start; i < end; i++)
             {
                 if (slotsArray[i] == 0)
