@@ -7,13 +7,19 @@ namespace ParkingLotConsole.Models
 {
     class Slot
     {
-        public VehicleType vehicleType { get; set; }
-        public int slots { get; set; }
+        public Guid ID { get; set; }
+        public int SlotNumber { get; set; }
 
-        public Slot(VehicleType type,int slots)
+        public VehicleType VehicleType { get; set; }
+        public bool isAvailable;
+
+        public string VehicleNumber { get; set; }
+
+        public Slot(int slotNumber, VehicleType vehicleType, bool isAvailable)
         {
-            vehicleType = type;
-            this.slots = slots;
+            SlotNumber = slotNumber;
+            VehicleType = vehicleType;
+            this.isAvailable = isAvailable;
         }
     }
 }
